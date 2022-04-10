@@ -18,6 +18,7 @@
                      helm-projectile
                      helm-ag
                      ruby-electric
+		     rvm
                      seeing-is-believing
                      chruby
                      inf-ruby
@@ -56,17 +57,50 @@
 ;; Autoclose paired syntax elements like parens, quotes, etc
 (require 'ruby-electric)
 (add-hook 'ruby-mode-hook 'ruby-electric-mode)
+
+
+(add-to-list 'auto-mode-alist
+             '("\\.\\(?:cap\\|gemspec\\|irbrc\\|gemrc\\|rake\\|rb\\|ru\\|thor\\)\\'" . ruby-mode))
+(add-to-list 'auto-mode-alist
+             '("\\(?:Brewfile\\|Capfile\\|Gemfile\\(?:\\.[a-zA-Z0-9._-]+\\)?\\|[rR]akefile\\)\\'" . ruby-mode))
+
+(rvm-use-default)
+
+;; ;; load theme rbenv
+;; (global-rbenv-mode)
+;; (rbenv-use-global)
+
 (chruby "2.2.2")
 
+;; $ gem install seeing_is_believing --version 3.0.0.beta.7
 (setq seeing-is-believing-prefix "C-.")
 (add-hook 'ruby-mode-hook 'seeing-is-believing)
 (require 'seeing-is-believing)
+;; run seeing is believing for entire file   `C-. s`
+;; clear seeing is believing output          `C-. c`
+;; tag a line "targeted" for SiB evaluation  `C-. t`
+;; run only "tagged" lines trailing "# =>"   `C-. x`
+;; evaluates each line
+
 
 (autoload 'inf-ruby-minor-mode "inf-ruby" "Run an inferior Ruby process" t)
 (add-hook 'ruby-mode-hook 'inf-ruby-minor-mode)
+;; launch inf-ruby process                   `C-c C-s`
+;; switc to pane                             `C-x o`
+;; push marked code to irb                   `C-c C-r`
+;; push marked code to irb and focus to it   `C-c M-r`
+;; see other bindings inf-ruby gives us      `M-x` (helm-M-x)
+;; when Rails or Sinatra run commands in web probject env inf-ruby  inf-ruby-console-rails
+;;                                                                  inf-ruby-console-racksh
+
 
 (require 'ruby-test-mode)
 (add-hook 'ruby-mode-hook 'ruby-test-mode)
+;; run tests from current file into second buffer `C-c C-,`
+;; ruby-test-mode tries to evaluate tests in current buffer - files ending `_test.rb` `_spec.rb`
+;; if no test, tries re-run last test
+;; or test in another visible window
+
 
 (add-hook 'compilation-finish-functions
           (lambda (buf strg)
@@ -75,3 +109,10 @@
             (goto-char (point-max))
             (local-set-key (kbd "q")
                            (lambda () (interactive) (quit-restore-window)))))
+;; runs test and jumps to bottom of test buffer
+
+
+;; to make rails work on emacs -> rinari
+;; version control integration -> magit
+
+;; https://worace.works/2016/06/07/getting-started-with-emacs-for-ruby/
